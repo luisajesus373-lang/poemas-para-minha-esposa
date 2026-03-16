@@ -2,102 +2,149 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Nosso Livro</title>
+<title>Poemas de uma Apaixonada</title>
 
 <style>
 
 body{
 margin:0;
 overflow:hidden;
-font-family: "Georgia", serif;
-background: radial-gradient(circle at bottom,#200020,#000);
-color:white;
+font-family:Georgia, serif;
+background:#1a001a;
 }
 
-/* estrelas */
+/* cenário */
 
-canvas{
-position:fixed;
-top:0;
-left:0;
-z-index:-1;
-}
-
-/* livro */
-
-.book{
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-width:600px;
-height:400px;
-perspective:2000px;
-}
-
-.page{
+.scene{
 position:absolute;
 width:100%;
 height:100%;
-background:linear-gradient(135deg,#6a0dad,#b3003c);
-border-radius:10px;
-padding:50px;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+/* grama */
+
+.grass{
+position:absolute;
+bottom:0;
+width:100%;
+height:40%;
+background:linear-gradient(#1e7a1e,#0b3d0b);
+}
+
+/* perna */
+
+.leg{
+position:absolute;
+bottom:10%;
+width:300px;
+height:400px;
+background:#3b1f16;
+border-radius:150px;
+transform:rotate(-10deg);
+filter:brightness(1.1);
+}
+
+/* livro fechado */
+
+.book{
+position:absolute;
+width:260px;
+height:360px;
+background:#6b3b1f;
+border-radius:6px;
+box-shadow:0 20px 40px rgba(0,0,0,.6);
+cursor:pointer;
+transform:rotate(-8deg);
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+padding:20px;
+transition:transform .5s;
+}
+
+.book:hover{
+transform:rotate(-8deg) scale(1.05);
+}
+
+.book h1{
+font-size:22px;
+color:black;
+}
+
+/* container livro aberto */
+
+.reader{
+position:absolute;
+width:900px;
+height:550px;
+display:none;
+perspective:2000px;
+}
+
+/* páginas */
+
+.page{
+position:absolute;
+width:50%;
+height:100%;
+background:white;
+box-shadow:0 10px 30px rgba(0,0,0,.4);
+padding:60px;
 box-sizing:border-box;
 transform-origin:left;
-transition:1s;
-box-shadow:0 20px 40px rgba(0,0,0,0.6);
+transition:1.2s;
+overflow:auto;
 }
 
-.page h1{
-margin-top:0;
-font-size:40px;
+.page.right{
+left:50%;
+transform-origin:left;
 }
 
-.page p{
-font-size:22px;
-line-height:1.6;
+.page.left{
+left:0;
 }
 
-.page.flipped{
+.page.flip{
 transform:rotateY(-180deg);
 }
 
-/* botão */
+/* texto */
 
-.controls{
+.menuTitle{
+font-size:28px;
+color:#4b004b;
+}
+
+.menuText{
+margin-top:20px;
+font-size:18px;
+line-height:1.6;
+color:#333;
+}
+
+/* botão virar */
+
+.corner{
 position:absolute;
-bottom:40px;
-width:100%;
-text-align:center;
-}
-
-button{
-background:#ff004c;
-border:none;
-padding:15px 35px;
-border-radius:30px;
-font-size:18px;
-color:white;
+width:60px;
+height:60px;
+right:0;
+bottom:0;
 cursor:pointer;
-transition:.3s;
 }
 
-button:hover{
-transform:scale(1.1);
-}
-
-/* corações */
-
-.heart{
-position:fixed;
-font-size:18px;
-pointer-events:none;
-animation:fade 1s forwards;
-}
-
-@keyframes fade{
-0%{opacity:1; transform:scale(1);}
-100%{opacity:0; transform:scale(2);}
+.corner::after{
+content:"↪";
+font-size:28px;
+position:absolute;
+right:10px;
+bottom:10px;
+color:#888;
 }
 
 </style>
@@ -105,131 +152,91 @@ animation:fade 1s forwards;
 
 <body>
 
-<canvas id="stars"></canvas>
+<div class="scene">
 
-<div class="book">
+<div class="grass"></div>
 
-<div class="page" id="p1">
-<h1>Para Você ❤️</h1>
-<p>
-Este não é apenas um site.<br><br>
-É um pequeno livro que escrevi<br>
-para guardar tudo aquilo<br>
-que sinto por você.
-</p>
-</div>
+<div class="leg"></div>
 
-<div class="page" id="p2">
-<h1>Poema 1</h1>
-<p>
-Entre bilhões de estrelas<br>
-o universo escolheu você<br><br>
-
-para ser o motivo<br>
-de todos os meus versos.
-</p>
-</div>
-
-<div class="page" id="p3">
-<h1>Poema 2</h1>
-<p>
-Se existir vida depois<br>
-quero te encontrar novamente.<br><br>
-
-Porque uma eternidade<br>
-ainda seria pouco<br>
-para te amar.
-</p>
-</div>
-
-<div class="page" id="p4">
-<h1>Para Sempre</h1>
-<p>
-Este livro nunca termina.<br><br>
-
-Porque cada dia ao seu lado<br>
-é uma nova página<br>
-da nossa história.
-</p>
+<div class="book" onclick="openBook()">
+<h1>
+Poemas de uma Apaixonada<br><br>
+Poiesis
+</h1>
 </div>
 
 </div>
 
-<div class="controls">
-<button onclick="nextPage()">Virar Página</button>
+<div class="reader" id="reader">
+
+<div class="page left" id="p1">
+
+<div class="menuTitle">
+Capturas dos poemas que escrevi para ti
+</div>
+
+<div class="menuText">
+
+Arrancado de minha alma, exposto pelo meu ser, este site é um tipo de
+"livro digital" que pode ser sempre atualizado, para demonstrar todo
+meu amor por você.
+
+<br><br>
+
+Encontrei em versos confusos uma vírgula repleta de amor, parei para
+pensar e me encontrei escrevendo em versos de paixão.
+
+</div>
+
+<div class="corner" onclick="nextPage()"></div>
+
+</div>
+
+<div class="page right" id="p2">
+
+<h2>Página reservada para poema</h2>
+
+<div class="corner" onclick="nextPage()"></div>
+
+</div>
+
+<div class="page right" id="p3">
+
+<h2>Página reservada para poema</h2>
+
+<div class="corner" onclick="nextPage()"></div>
+
+</div>
+
+<div class="page right" id="p4">
+
+<h2>Página reservada para poema</h2>
+
+</div>
+
 </div>
 
 <script>
 
-/* virar páginas */
+function openBook(){
 
-let page=1
+document.querySelector(".scene").style.display="none"
+document.getElementById("reader").style.display="block"
+
+}
+
+let current = 1
 
 function nextPage(){
 
-const p=document.getElementById("p"+page)
+let page = document.getElementById("p"+current)
 
-if(p){
-p.classList.add("flipped")
-page++
+if(page){
+page.classList.add("flip")
+current++
 }
 
 }
-
-/* estrelas */
-
-const canvas=document.getElementById("stars")
-const ctx=canvas.getContext("2d")
-
-canvas.width=window.innerWidth
-canvas.height=window.innerHeight
-
-let stars=[]
-
-for(let i=0;i<200;i++){
-stars.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-r:Math.random()*2
-})
-}
-
-function drawStars(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height)
-
-ctx.fillStyle="white"
-
-stars.forEach(s=>{
-ctx.beginPath()
-ctx.arc(s.x,s.y,s.r,0,Math.PI*2)
-ctx.fill()
-})
-
-requestAnimationFrame(drawStars)
-}
-
-drawStars()
-
-/* corações no mouse */
-
-document.addEventListener("mousemove",e=>{
-
-const heart=document.createElement("div")
-
-heart.className="heart"
-heart.innerHTML="❤"
-
-heart.style.left=e.clientX+"px"
-heart.style.top=e.clientY+"px"
-
-document.body.appendChild(heart)
-
-setTimeout(()=>{
-heart.remove()
-},1000)
-
-})
 
 </script>
 
